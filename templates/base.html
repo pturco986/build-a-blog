@@ -2,50 +2,10 @@
 <html>
     <head>
         <title>Build-a-Blog</title>
-        <style type="text/css">
-            .error {
-                color: red;
-            }
-            .form {
-            background-color: #eee;
-            padding: 20px;
-            margin: 0 auto;
-            width: 400px;
-            font: 12px sans-serif;
-            border-radius: 8px;
-            }
-            .textarea {
-                margin: 10 px 0;
-                width: 400px;
-                height: 120px;
-            }
-        </style>
     </head>
+
     <body>
-        <h1>Welcome to the Placidus Holdarion Blog</h1>
-        <form method="post">
-            <label>
-                <div>Post Title</div>
-                <input type="text" name="title" value="{{title}}">
-            </label>
-            <label>
-                <div>Post Text</div>
-                <textarea name="blogtext">{{blogtext}}</textarea>
-            </label>
-            <div class="error">{{error}}</div>
-
-            <input type="submit">
-        </form>
-        <hr>
-
-        {% for blogs in blogtext %}
-            <div class="blogs">
-                <div class="blogs-title">{{blogs.title}}</div>
-                <pre class="blogs-body">
-
-
-
-
+        <h1> Placidus Holdarien Blog</h1>
 
         {% block content %}
         {% endblock %}

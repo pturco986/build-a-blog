@@ -24,17 +24,24 @@ class BlogPost(db.Model):
     blogtext = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
-
 class MainPage(Handler):
-    """For storing blogposts in the database and inputting new ones"""
-    def render_base(self, title="", blogtext="", error=""):
-        blogs = db.GqlQuery("SELECT * FROM BlogPost"
-                            "ORDER BY created DESC")
+    def render_posts(self, title="", blogtext="", error=""):
+        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC")
 
-        self.render("base.html", title=title, blogtext=blogtext, error=error, blogs = blogs)
+        self.render("posts.html", title=title, blogtext=blogtext, error=error, blogs=blogs)
+
+    def post(self):
+        self.render_posts()
+
+class NewSub(Handler):
+    """For storing blogposts in the database and inputting new ones"""
+    def render_newpost(self, title="", blogtext="", error=""):
+        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC")
+
+        self.render("newpost.html", title=title, blogtext=blogtext, error=error, blogs=blogs)
 
     def get(self):
-        self.render_base()
+        self.render_newpost()
 
     def post(self):
         title = self.request.get("title")
@@ -47,7 +54,7 @@ class MainPage(Handler):
             self.redirect("/")
         else:
             error = "We need both a title and some content!"
-            self.render_base(title, blogtext, error)
+            self.render_newpost(title, blogtext, error)
 
     # def post(self):
     #     self.response.write(self.request.POST['blogtext'])
@@ -58,6 +65,6 @@ class MainPage(Handler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/blog', MainPage),
-    ('/newpost', MainPage)
+    ('/newpost', NewSub)
 
 ], debug=True)

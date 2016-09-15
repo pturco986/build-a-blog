@@ -2,14 +2,13 @@
 
 {% block content %}
 
-<h2>Posts by date: </h2>
+<h3>Posts by date</h3>
 
-<ul>
-{% for posts in post %}
-    <li>
-    
-    </li>
+<hr>
 
+{% for blog in blogs %}
+    <div class="blog">
+        <div class="blog-title">{{blog.title}}</div>
+        <pre class="blog-body">{{blog.blogtext}}</pre>
+    </div>
 {% endfor %}
-</ul>
-{% endblock %}
