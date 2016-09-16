@@ -26,17 +26,16 @@ class BlogPost(db.Model):
 
 class MainPage(Handler):
     def render_posts(self, title="", blogtext="", error=""):
-        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC")
+        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 5")
 
         self.render("posts.html", title=title, blogtext=blogtext, error=error, blogs=blogs)
-
-    def post(self):
+    def get(self):
         self.render_posts()
 
 class NewSub(Handler):
     """For storing blogposts in the database and inputting new ones"""
     def render_newpost(self, title="", blogtext="", error=""):
-        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC")
+        blogs = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 5")
 
         self.render("newpost.html", title=title, blogtext=blogtext, error=error, blogs=blogs)
 
@@ -51,10 +50,30 @@ class NewSub(Handler):
             b = BlogPost(title = title, blogtext = blogtext)
             b.put()
 
-            self.redirect("/")
+            self.redirect("/blog/%s" % b.key().id())
         else:
             error = "We need both a title and some content!"
             self.render_newpost(title, blogtext, error)
+
+
+class ViewPostHandler(Handler):
+    def render_viewpost(self, title="", blogtext=""):
+
+        self.render("viewpost.html", title=title, blogtext=blogtext)
+
+    def get(self, id):
+        b = BlogPost.get_by_id(int(id))
+        if b:
+            self.render_viewpost(title=b.title, blogtext=b.blogtext)
+
+        else:
+            error = "This post does not exist!"
+            t = jinja_env.get_template("404.html")
+            response = t.render(error=error)
+            self.response.write(response)
+
+
+
 
     # def post(self):
     #     self.response.write(self.request.POST['blogtext'])
@@ -65,6 +84,7 @@ class NewSub(Handler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/blog', MainPage),
+    webapp2.Route('/blog/<id:\d+>', ViewPostHandler),
     ('/newpost', NewSub)
 
 ], debug=True)
